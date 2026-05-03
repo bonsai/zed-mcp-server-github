@@ -11,7 +11,8 @@ const BINARY_NAME: &str = "github-mcp-server";
 
 #[derive(Debug, Deserialize, JsonSchema)]
 struct GitHubContextServerSettings {
-    github_personal_access_token: String,
+    #[schemars(description = "Your GitHub Personal Access Token. If not provided, OAuth authentication will be used.")]
+    github_personal_access_token: Option<String>,
 }
 
 struct GitHubModelContextExtension {
@@ -113,19 +114,25 @@ impl zed::Extension for GitHubModelContextExtension {
         project: &Project,
     ) -> Result<Command> {
         let settings = ContextServerSettings::for_project("mcp-server-github", project)?;
-        let Some(settings) = settings.settings else {
-            return Err("missing `github_personal_access_token` setting".into());
-        };
-        let settings: GitHubContextServerSettings =
-            serde_json::from_value(settings).map_err(|e| e.to_string())?;
+        let token: Option<String> = settings
+            .settings
+            .map(|s| {
+                let settings: GitHubContextServerSettings =
+                    serde_json::from_value(s).map_err(|e| e.to_string())?;
+                Ok(settings.github_personal_access_token)
+            })
+            .transpose()?
+            .flatten();
+
+        let mut env = Vec::new();
+        if let Some(pat) = token {
+            env.push(("GITHUB_PERSONAL_ACCESS_TOKEN".into(), pat));
+        }
 
         Ok(Command {
             command: self.context_server_binary_path(context_server_id)?,
             args: vec!["stdio".to_string()],
-            env: vec![(
-                "GITHUB_PERSONAL_ACCESS_TOKEN".into(),
-                settings.github_personal_access_token,
-            )],
+            env,
         })
     }
 

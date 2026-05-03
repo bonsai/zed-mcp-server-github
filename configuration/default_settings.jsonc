@@ -1,4 +1,5 @@
 {
-  /// Your GitHub Personal Access Token
-  "github_personal_access_token": "GITHUB_PERSONAL_ACCESS_TOKEN"
+  /// Your GitHub Personal Access Token (optional).
+  /// If not provided, OAuth authentication will be used when the server starts.
+  // "github_personal_access_token": "GITHUB_PERSONAL_ACCESS_TOKEN"
 }

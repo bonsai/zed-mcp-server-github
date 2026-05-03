@@ -5,7 +5,15 @@ This extension integrates [GitHub MCP Server](https://github.com/github/github-m
 
 To install navigate to: **Zed** > **Extensions**. Or use the command palette ([macOS](https://github.com/zed-industries/zed/blob/main/assets/keymaps/default-macos.json#L581), [Linux](https://github.com/zed-industries/zed/blob/main/assets/keymaps/default-linux.json#L459)) to search `extensions`.
 
-You'll need to [create a PAT with `repo` permissions](https://github.com/settings/tokens/new?description=zed-mcp-server-github&scopes=repo).
+## Authentication
+
+### OAuth (Recommended)
+
+No configuration required. When you first use the extension, GitHub MCP Server will guide you through OAuth authentication in your browser.
+
+### Personal Access Token
+
+If you prefer to use a PAT, [create one with `repo` permissions](https://github.com/settings/tokens/new?description=zed-mcp-server-github&scopes=repo) and configure it:
 
 ```json
 "context_servers": {
